@@ -1,6 +1,6 @@
 {
-  "name": "playing-leaderboards-elements",
-  "description": "Leaderboards management web components for playful applications",
+  "name": "playing-leaderboard-elements",
+  "description": "Leaderboard management web components for playful applications",
   "version": "1.0.0",
   "license": "MIT",
   "devDependencies": {
