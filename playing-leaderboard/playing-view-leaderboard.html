@@ -1,9 +1,9 @@
 <!--
-An element for displaying leaderboard metric data.
+An element for displaying leaderboard data.
 
 Example:
 
-    <playing-view-leaderboard metric=[[metric]] new></playing-view-leaderboard>
+    <playing-view-leaderboard leaderboard=[[leaderboard]] new></playing-view-leaderboard>
 
 @group Playing Elements
 @element playing-view-leaderboard
@@ -39,29 +39,29 @@ Example:
       }
     </style>
     
-    <div role="widget" hidden$="[[!metric.description]]">
-      <label>[[i18n('play.metric.field.description')]]</label>
-      <div name="description" class="multiline">[[metric.description]]</div>
+    <div role="widget" hidden$="[[!leaderboard.description]]">
+      <label>[[i18n('play.leaderboard.field.description')]]</label>
+      <div name="description" class="multiline">[[leaderboard.description]]</div>
     </div>
 
-    <div role="widget" hidden$="[[!metric.image]]">
-      <label>[[i18n('play.metric.field.image')]]</label>
-      <img id="image" src$="[[metric.image.url]]">
+    <div role="widget" hidden$="[[!leaderboard.image]]">
+      <label>[[i18n('play.leaderboard.field.image')]]</label>
+      <img id="image" src$="[[leaderboard.image.url]]">
     </div>
 
     <div role="widget">
-      <label>[[i18n('play.metric.field.constraints')]]</label>
+      <label>[[i18n('play.leaderboard.field.constraints')]]</label>
       <div class="table">
         <div class="table-header">
-          <div class="flex">[[i18n('play.metric.leaderboard.constraints.minimum')]]</div>
-          <div class="flex">[[i18n('play.metric.leaderboard.constraints.maximum')]]</div>
-          <div class="flex">[[i18n('play.metric.leaderboard.constraints.default')]]</div>
+          <div class="flex">[[i18n('play.leaderboard.constraints.minimum')]]</div>
+          <div class="flex">[[i18n('play.leaderboard.constraints.maximum')]]</div>
+          <div class="flex">[[i18n('play.leaderboard.constraints.default')]]</div>
         </div>
         <div class="table-rows">
           <div class="table-row">
-            <div class="flex">[[metric.constraints.minimum]]</div>
-            <div class="flex">[[metric.constraints.maximum]]</div>
-            <div class="flex">[[metric.constraints.default]]</div>
+            <div class="flex">[[leaderboard.constraints.minimum]]</div>
+            <div class="flex">[[leaderboard.constraints.maximum]]</div>
+            <div class="flex">[[leaderboard.constraints.default]]</div>
           </div>
         </div>
       </div>
@@ -77,9 +77,9 @@ Example:
       static get properties() {
         return {
           /**
-           * The metric object to be displayed.
+           * The leaderboard object to be displayed.
            */
-          metric: {
+          leaderboard: {
             type: Object,
             value: {}
           }
