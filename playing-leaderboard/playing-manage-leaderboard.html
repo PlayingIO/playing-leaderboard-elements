@@ -16,7 +16,7 @@ An element for managing a leaderboard.
 
 Example:
 
-    <playing-manage-leaderboard leaderboard="Administrator"></playing-manage-leaderboard>
+    <playing-manage-leaderboard leaderboard="leaderboard"></playing-manage-leaderboard>
 
 @group Playing Elements
 @element playing-manage-leaderboard
@@ -55,14 +55,14 @@ Example:
         margin-top: 10px;
       }
 
-      .leaderboards {
+      .actions {
         @apply --layout-horizontal;
         @apply --layout-flex;
         @apply --layout-center;
         @apply --layout-end-justified;
       }
 
-      .leaderboards paper-button {
+      .actions paper-button {
         margin-left: 1em;
       }
 
@@ -122,7 +122,7 @@ Example:
           <h4 class="subname">[[i18n('play.leaderboard.heading')]]</h4>
         </div>
 
-        <div class="leaderboards">
+        <div class="actions">
 
           <!-- delete -->
           <paper-button noink id="deleteLeaderboardButton" class="horizontal layout center" on-tap="_toggleDeleteLeaderboard">
