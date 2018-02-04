@@ -1,0 +1,92 @@
+<!--
+An element for displaying leaderboard metric data.
+
+Example:
+
+    <playing-view-leaderboard metric=[[metric]] new></playing-view-leaderboard>
+
+@group Playing Elements
+@element playing-view-leaderboard
+-->
+<dom-module id="playing-view-leaderboard">
+  <template>
+    <style include="mostly-styles">
+      :host {
+        display: block;
+      }
+
+      *[role=widget] {
+        margin-bottom: 16px;
+      }
+
+      label {
+        @apply --mostly-label;
+      }
+
+      div.multiline {
+        white-space: pre-line;
+      }
+
+      div {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
+        -o-hyphens: auto;
+        hyphens: auto;
+      }
+    </style>
+    
+    <div role="widget" hidden$="[[!metric.description]]">
+      <label>[[i18n('play.metric.field.description')]]</label>
+      <div name="description" class="multiline">[[metric.description]]</div>
+    </div>
+
+    <div role="widget" hidden$="[[!metric.image]]">
+      <label>[[i18n('play.metric.field.image')]]</label>
+      <img id="image" src$="[[metric.image.url]]">
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('play.metric.field.constraints')]]</label>
+      <div class="table">
+        <div class="table-header">
+          <div class="flex">[[i18n('play.metric.leaderboard.constraints.minimum')]]</div>
+          <div class="flex">[[i18n('play.metric.leaderboard.constraints.maximum')]]</div>
+          <div class="flex">[[i18n('play.metric.leaderboard.constraints.default')]]</div>
+        </div>
+        <div class="table-rows">
+          <div class="table-row">
+            <div class="flex">[[metric.constraints.minimum]]</div>
+            <div class="flex">[[metric.constraints.maximum]]</div>
+            <div class="flex">[[metric.constraints.default]]</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    class PlayingViewLeaderboard extends Polymer.mixinBehaviors([Mostly.I18nBehavior], Polymer.Element) {
+
+      static get is() { return 'playing-view-leaderboard' };
+
+      static get properties() {
+        return {
+          /**
+           * The metric object to be displayed.
+           */
+          metric: {
+            type: Object,
+            value: {}
+          }
+        }
+      }
+    }
+
+    customElements.define(PlayingViewLeaderboard.is, PlayingViewLeaderboard);
+  </script>
+</dom-module>

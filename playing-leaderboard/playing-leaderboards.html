@@ -1,0 +1,200 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-pages/iron-pages.html">
+<link rel="import" href="../../iron-form/iron-form.html">
+
+<link rel="import" href="../../paper-card/paper-card.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../paper-item/paper-icon-item.html">
+<link rel="import" href="../../paper-toast/paper-toast.html">
+
+<link rel="import" href="../../iron-input/iron-input.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-icons/social-icons.html">
+
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
+
+<link rel="import" href="../playing-leaderboard/playing-create-leaderboard.html">
+<link rel="import" href="../playing-leaderboard/playing-manage-leaderboard.html">
+<link rel="import" href="../playing-leaderboard/playing-leaderboard-search.html">
+
+<!--
+An element for managing leaderboards in Playing game services.
+@group Playing UI Elements
+@element playing-leaderboards
+-->
+<dom-module id="playing-leaderboards">
+  <template>
+    <style include="mostly-styles">
+      :host {
+        display: block;
+        position: relative;
+        @apply --layout-flex;
+      }
+
+      .main {
+        position: relative;
+      }
+
+      #createButton {
+        position: absolute;
+        right: 0;
+        padding: 0;
+        top: 15px;
+        width: 130px;
+        height: 48px;
+        margin-bottom: 16px;
+      }
+
+      paper-button iron-icon {
+        padding-right: 8px;
+      }
+
+      paper-card {
+        @apply --mostly-card;
+      }
+    </style>
+
+    <mostly-connection user="{{_currentUser}}"></mostly-connection>
+
+    <mostly-page>
+      <div slot="header">
+        <span class="flex">[[i18n('play.leaderboard.heading')]]</span>
+      </div>
+      <div class="main">
+        <paper-toast id="toast"></paper-toast>
+        <iron-pages selected="[[page]]" attr-for-selected="name">
+          <section name="search">
+            <div class="horizontal layout center">
+              <template is="dom-if" if="[[_canCreateLeaderboard(readonly, _currentUser)]]">
+                <div class="flex">
+                  <paper-button noink id="createButton" class="primary horizontal layout center" on-tap="_createLeaderboard">
+                    <iron-icon icon="mostly:add"></iron-icon> [[i18n('play.leaderboard.new')]]
+                  </paper-button>
+                </div>
+              </template>
+            </div>
+            <playing-leaderboard-search></playing-leaderboard-search>
+          </section>
+
+          <section name="create-leaderboard">
+            <paper-card>
+              <playing-create-leaderboard id="leaderboardCreator"
+                    readonly$="[[readonly]]"></playing-create-leaderboard>
+            </paper-card>
+          </section>
+
+          <section name="manage-leaderboard">
+            <playing-manage-leaderboard id="leaderboardManager"
+                    leaderboard="[[selectedLeaderboard.id]]"
+                    readonly$="[[readonly]]"></playing-manage-leaderboard>
+          </section>
+        </iron-pages>
+      </div>
+    </mostly-page>
+  </template>
+
+  <script>
+    class PlayingLeaderboards extends Polymer.mixinBehaviors(
+        [Mostly.I18nBehavior, Mostly.FiltersBehavior, Mostly.RoutingBehavior], Polymer.Element) {
+
+      static get is() { return 'playing-leaderboards' };
+
+      static get properties() {
+        return {
+          /**
+           * The leaderboard manage page to be displayed.
+           */
+          page: {
+            type: String,
+            value: 'search',
+            notify: true
+          },
+
+          /**
+           * True if currently in read only mode.
+           */
+          readonly: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+
+          _currentUser: {
+            type: Object
+          }
+        }
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('goHome', this._goSearch);
+        this.addEventListener('playing-leaderboard-created', this._toast);
+        this.addEventListener('manageLeaderboard', this._manageLeaderboard);
+      }
+
+      /**
+       * Go to the 'search' page.
+       */
+      _goSearch() {
+        this.selectedLeaderboard = null;
+        this.$$('playing-leaderboard-search')._searchTermChanged();
+        this.entity = {};
+        this.page = 'search';
+        this.navigateTo('play', 'leaderboard-management');
+      }
+
+      /**
+       * Got to the 'create-leaderboard' page.
+       */
+      _createLeaderboard(e) {
+        this.page = 'create-leaderboard';
+      }
+
+      _manageLeaderboard(e) {
+        this.selectedLeaderboard = null;
+        this.selectedLeaderboard = e.detail.leaderboard;
+        this.page = 'manage-leaderboard';
+      }
+
+      _hasAdministrationPermissions(user) {
+        return user && (user.isAdministrator || this.isMember(user, 'powerusers'));
+      }
+
+      _canCreateLeaderboard(readonly, currentUser) {
+        return !readonly && this._hasAdministrationPermissions(currentUser);
+      }
+
+      /**
+       * Displays a message.
+       */
+      _toast(event) {
+        var msg;
+        switch (event.type) {
+          case 'playing-leaderboard-created':
+            msg = 'Leaderboard ' + event.detail.leaderboard + ' created';
+            break;
+        }
+        if (msg) {
+          this.$.toast.text = msg;
+          this.$.toast.open();
+        }
+      }
+
+      /**
+       * Determines whether a custom element is registered
+       */
+      _isRegistered(tag) {
+        return document.createElement(tag) instanceof Polymer.Element;
+      }
+    }
+
+    customElements.define(PlayingLeaderboards.is, PlayingLeaderboards);
+  </script>
+</dom-module>

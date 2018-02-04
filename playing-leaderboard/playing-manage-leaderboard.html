@@ -1,0 +1,278 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-toast/paper-toast.html">
+
+<link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
+<link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
+
+<!--
+An element for managing a leaderboard.
+
+Example:
+
+    <playing-manage-leaderboard leaderboard="Administrator"></playing-manage-leaderboard>
+
+@group Playing Elements
+@element playing-manage-leaderboard
+-->
+
+<dom-module id="playing-manage-leaderboard">
+  <template>
+    <style include="mostly-styles">
+      :host {
+        display: block;
+      }
+
+      label {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .header {
+        @apply --layout-start;
+      }
+
+      .backButton {
+        color: var(--mostly-button-primary, #00adff);
+      }
+
+      .name {
+        margin: 10px 0 5px 5px;
+      }
+
+      .subname {
+        font-weight: normal;
+        margin: 0 0 0 5px;
+      }
+
+      .icon {
+        margin-top: 10px;
+      }
+
+      .leaderboards {
+        @apply --layout-horizontal;
+        @apply --layout-flex;
+        @apply --layout-center;
+        @apply --layout-end-justified;
+      }
+
+      .leaderboards paper-button {
+        margin-left: 1em;
+      }
+
+      paper-button iron-icon {
+        width: 1.3rem;
+        margin-right: .5rem;
+      }
+
+      .remove {
+        color: red;
+        cursor: pointer;
+        font-size: .8rem;
+        margin-left: 10px;
+        text-decoration: underline;
+      }
+
+      playing-view-leaderboard {
+        margin: 2em;
+      }
+
+      paper-dialog {
+        min-width: 400px;
+        padding-top: 24px;
+      }
+
+      #errors {
+        color: red;
+        margin-top: 20px;
+      }
+
+      .buttons {
+        @apply --buttons-bar;
+        margin-top: 2em;
+      }
+
+      .confirm {
+        padding: 2em;
+        font-size: 1.1rem;
+      }
+
+      paper-card {
+        @apply --mostly-card;
+      }
+    </style>
+
+    <mostly-resource id="request" path="leaderboards" schemas='*'></mostly-resource>
+    <mostly-resource id="editRequest" path="leaderboards" schemas='*'></mostly-resource>
+
+    <paper-toast id="toast"></paper-toast>
+
+    <paper-card>
+      <div class="header horizontal layout">
+        <paper-icon-button class="backButton" icon="icons:arrow-back" on-tap="_goHome"></paper-icon-button>
+        <iron-icon icon="playing:leaderboard" class="icon"></iron-icon>
+        <div class="layout vertical">
+          <h3 class="name">[[leaderboard.name]]</h3>
+          <h4 class="subname">[[i18n('play.leaderboard.heading')]]</h4>
+        </div>
+
+        <div class="leaderboards">
+
+          <!-- delete -->
+          <paper-button noink id="deleteLeaderboardButton" class="horizontal layout center" on-tap="_toggleDeleteLeaderboard">
+            <iron-icon noink icon="mostly:delete"></iron-icon> [[i18n('command.delete')]]
+          </paper-button>
+
+          <!-- edit -->
+          <paper-button noink id="editLeaderboardButton" class="primary horizontal layout center" on-tap="_toggleEditLeaderboard">
+            <iron-icon icon="mostly:edit"></iron-icon> [[i18n('play.leaderboard.editLeaderboard.button')]]
+          </paper-button>
+
+        </div>
+      </div>
+
+      <iron-pages selected="[[page]]" attr-for-selected="name">
+        <section name="viewer">
+          <playing-view-leaderboard id="leaderboardViewer" leaderboard="[[leaderboard]]"></playing-view-leaderboard>
+        </section>
+        <section name="editor">
+          <h2>[[i18n('play.leaderboard.editLeaderboard.heading')]]</h2>
+          <iron-form id="editLeaderboardForm">
+            <form class="vertical layout">
+              <playing-edit-leaderboard id="leaderboardEditor" leaderboard="[[leaderboard]]"></playing-edit-leaderboard>
+            </form>
+          </iron-form>
+          <div class="horizontal end-justified layout">
+            <div class="flex start-justified">
+              <paper-button noink on-tap="_cancelEditLeaderboard">[[i18n('command.cancel')]]</paper-button>
+            </div>
+            <paper-button noink class="primary" on-tap="_submitEditLeaderboard">
+              [[i18n('command.save.changes')]]
+            </paper-button>
+          </div>
+        </section>
+    </paper-card>
+
+    <mostly-dialog id="deleteLeaderboardDialog" with-backdrop>
+      <h2>[[i18n('play.leaderboard.delete.confirm')]]</h2>
+      <div class="buttons horizontal end-justified layout">
+        <div class="flex start-justified">
+          <paper-button noink dialog-dismiss>[[i18n('label.no')]]</paper-button>
+        </div>
+        <paper-button noink class="primary" on-tap="_deleteLeaderboard">[[i18n('label.yes')]]</paper-button>
+      </div>
+    </mostly-dialog>
+
+  </template>
+
+  <script>
+    class PlayingManageLeaderboard extends Polymer.mixinBehaviors(
+        [Mostly.I18nBehavior, Mostly.FiltersBehavior], Polymer.Element) {
+
+      static get is() { return 'playing-manage-leaderboard' };
+
+      static get properties() {
+        return {
+          /**
+           * The leaderboard manage page to be displayed.
+           */
+          page: {
+            type: String,
+            value: 'viewer',
+            notify: true
+          },
+
+          leaderboard: {
+            type: Object,
+            observer: '_fetch'
+          },
+
+          empty: Boolean,
+
+          readonly: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+
+          errors: {
+            type: String,
+            reflectToAttribute: true
+          }
+        }
+      }
+
+      ready() {
+        super.ready();
+        this.$.editLeaderboardForm.addEventListener('iron-form-presubmit', (event) => {
+          event.preventDefault();
+          this._saveLeaderboard();
+        });
+      }
+
+      _fetch() {
+        if (typeof this.leaderboard === 'string') {
+          this.$.request.get().then((response) => {
+            this.leaderboard = response.data;
+          });
+        }
+      }
+
+      _toggleDialog(e) {
+        this.$.dialog.toggle();
+      }
+
+      _toggleEditLeaderboard() {
+        this.page = (this.page === 'viewer')? 'editor' : 'viewer';
+      }
+
+      _cancelEditLeaderboard() {
+        this.page = 'viewer';
+      }
+
+      _submitEditLeaderboard() {
+        this.$.editLeaderboardForm.submit();
+      }
+
+      _saveLeaderboard() {
+        this.page = 'viewer';
+        var editedLeaderboard = JSON.parse(JSON.stringify(this.leaderboard));
+        this.$.editRequest.data = editedLeaderboard;
+        this.$.editRequest.patch().then((response) => {
+          this.leaderboard = response.data;
+          this._toast(this.i18n('play.leaderboard.updated'));
+        });
+      }
+
+      _toggleDeleteLeaderboard() {
+        this.$.deleteLeaderboardDialog.toggle();
+      }
+
+      _deleteLeaderboard() {
+        this.$.deleteLeaderboardDialog.toggle();
+        this.$.editRequest.remove().then((response) => {
+          this.fire('playing-leaderboard-deleted', this.leaderboard);
+          this._goHome();
+        });
+      }
+
+      _goHome() {
+        this.page = 'viewer';
+        this.fire('goHome');
+      }
+
+      _toast(msg) {
+        this.$.toast.text = msg;
+        this.$.toast.open();
+      }
+    }
+
+    customElements.define(PlayingManageLeaderboard.is, PlayingManageLeaderboard);
+  </script>
+</dom-module>
