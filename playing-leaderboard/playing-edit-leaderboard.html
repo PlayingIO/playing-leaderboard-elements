@@ -33,9 +33,9 @@ Example:
     <mostly-collapse-button>
       <div slot="collapse-trigger">[[i18n('play.leaderboard.advanced')]]</div>
       <div slot="collapse-content">
-        <label>[[i18n('documentPage.tags')]]</label>
-        <playing-tag-suggestion document="[[leaderboard]]" allow-new-tags
-                placeholder="[[i18n('documentPage.tags.placeholder')]]">
+        <label>[[i18n('playing.tags')]]</label>
+        <playing-tag-suggestion path="leaderboards" target="[[leaderboard]]" allow-new-tags
+                placeholder="[[i18n('playing.tags.placeholder')]]">
         </playing-tag-suggestion>
 
         <label>[[i18n('play.leaderboard.field.constraints')]]</label>
