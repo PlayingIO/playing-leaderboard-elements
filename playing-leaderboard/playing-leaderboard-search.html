@@ -37,36 +37,25 @@
         opacity: 0.6;
       }
 
-      .counter {
-        margin-right: 2em;
-      }
-
       h3 iron-icon {
         width: 1.3em;
         margin-right: .2rem;
       }
-
-      paper-card {
-        @apply --mostly-card;
-      }
-
     </style>
 
     <mostly-resource id="leaderboardSearch" auto
             path="leaderboards"
             response="{{leaderboards}}"></mostly-resource>
 
-    <paper-card class="search">
-      <paper-input noink autofocus="true" value="{{searchTerm}}" type="search"
+    <mostly-card class="search">
+      <mostly-input noink autofocus="true" value="{{searchTerm}}" type="search"
               placeholder="[[i18n('play.leaderboard.search.placeholder')]]">
         <iron-icon icon="mostly:search" prefix></iron-icon>
-      </paper-input>
-    </paper-card>
+      </mostly-input>
+    </mostly-card>
 
     <!-- leaderboards -->
-    <paper-card name="leaderboards">
-      <h3 class="title">
-        <iron-icon icon="playing:leaderboard" prefix></iron-icon>  [[i18n('play.leaderboard.heading')]]
+    <mostly-card name="leaderboards" icon="playing:leaderboard" heading="[[i18n('play.leaderboard.heading')]]">
       </h3>
       <div class="fade-6">
         <p>[[i18n('play.leaderboard.guide.search')]]</p>
@@ -91,7 +80,7 @@
         </div>
       </div>
       <mostly-pagination-controls page="{{leaderboardsCurrentPage}}" number-of-pages="[[leaderboards.numberOfPages]]"></mostly-pagination-controls>
-    </paper-card>
+    </mostly-card>
 
   </template>
 

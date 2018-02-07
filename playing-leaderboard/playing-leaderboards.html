@@ -15,10 +15,11 @@
 <link rel="import" href="../../iron-icons/iron-icons.html">
 <link rel="import" href="../../iron-icons/social-icons.html">
 
-<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
-<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-i18n-behavior.html">
 <link rel="import" href="../../mostly-elements/behaviors/mostly-filters-behavior.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
+<link rel="import" href="../../mostly-elements/mostly-common/mostly-connection.html">
+<link rel="import" href="../../mostly-elements/widgets/mostly-card.html">
 
 <link rel="import" href="../playing-leaderboard/playing-create-leaderboard.html">
 <link rel="import" href="../playing-leaderboard/playing-manage-leaderboard.html">
@@ -55,10 +56,6 @@ An element for managing leaderboards in Playing game services.
       paper-button iron-icon {
         padding-right: 8px;
       }
-
-      paper-card {
-        @apply --mostly-card;
-      }
     </style>
 
     <mostly-connection user="{{_currentUser}}"></mostly-connection>
@@ -84,10 +81,8 @@ An element for managing leaderboards in Playing game services.
           </section>
 
           <section name="create-leaderboard">
-            <paper-card>
-              <playing-create-leaderboard id="leaderboardCreator"
+            <playing-create-leaderboard id="leaderboardCreator"
                     readonly$="[[readonly]]"></playing-create-leaderboard>
-            </paper-card>
           </section>
 
           <section name="manage-leaderboard">
