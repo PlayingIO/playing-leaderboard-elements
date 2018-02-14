@@ -72,7 +72,7 @@
               <div class="flex-4">[[item.description]]</div>
             </div>
           </template>
-          <template is="dom-if" if=[[_empty(leaderboards.data)]]>
+          <template is="dom-if" if=[[!leaderboards.data.length]]>
             <div class="table-row">
               <div class="empty-result">[[i18n('play.leaderboard.search.empty')]]</div>
             </div>
@@ -136,10 +136,6 @@
 
       _manageLeaderboard(e) {
         this.fire('manageLeaderboard', { leaderboard: e.model.item });
-      }
-
-      _empty(entries) {
-        return entries && entries.length === 0;
       }
 
     }
