@@ -24,7 +24,7 @@
 -->
 <dom-module id="playing-create-leaderboard">
   <template>
-    <style include="mostly-styles playing-tyles">
+    <style include="mostly-styles playing-styles">
       :host {
         display: block;
       }
@@ -99,7 +99,7 @@
             </paper-button>
           </div>
 
-          <span id="errors" hidden$="[[!_hasErrors(errors)]]">[[errors]]</span>
+          <span id="errors" hidden$="[[!hasErrors(errors)]]">[[errors]]</span>
 
         </form>
       </iron-form>
@@ -117,7 +117,9 @@
         return {
           leaderboard: {
             type: Object,
-            value: () => { return { constraints: {} } }
+            value() {
+              return this.emptyLeaderboard();
+            }
           },
 
           errors: {
@@ -148,7 +150,7 @@
       }
 
       _goHome() {
-        this._resetFields();
+        this.resetFields();
         this.fire('goHome');
       }
 
@@ -173,7 +175,7 @@
        */
       _create() {
         this._doCreate(this.leaderboard).then((leaderboard) => {
-          this._resetFields();
+          this.resetFields();
           if (!this._createAnother) {
             this._goHome();
           }
@@ -191,15 +193,6 @@
 
       _cancel() {
         this._goHome();
-      }
-
-      _resetFields() {
-        this.leaderboard = {};
-        this.errors = '';
-      }
-
-      _hasErrors() {
-        return this.errors !== '';
       }
     }
 

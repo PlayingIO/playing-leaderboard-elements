@@ -35,6 +35,19 @@
         leaderboard: this.leaderboard,
         "new": true
       };
+    },
+
+    emptyLeaderboard() {
+      return { constraints: {} };
+    },
+
+    resetFields() {
+      this.leaderboard = this.emptyLeaderboard();
+      this.errors = '';
+    },
+
+    hasErrors() {
+      return this.errors !== '';
     }
   }];
 </script>
