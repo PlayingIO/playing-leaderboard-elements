@@ -22,13 +22,31 @@ Example:
       }
     </style>
 
+    <mostly-resource id="metrics" path="metrics"
+            params="[[metricParams]]"
+            schemas="*"
+            response-data="{{metrics}}"
+            auto cached="10"></mostly-resource>
+
     <div class="layout vertical" role="widget">
       <mostly-input name="description" label="[[i18n('play.leaderboard.field.description')]]"
             value="{{leaderboard.description}}" maxlength="300"
             char-counter always-float-label></mostly-input>
-      <playing-dropzone name="content"
+
+      <playing-dropzone role="widget" name="content"
               label="[[i18n('play.leaderboard.field.image')]]"
               document="{{leaderboard}}" xpath="image"></playing-dropzone>
+
+      <mostly-select role="widget"
+              label="[[i18n('play.leaderboard.metric')]]"
+              placeholder="[[i18n('play.leaderboard.metric.placeholder')]]"
+              selected="{{leaderboard.metric}}"
+              attr-for-selected="name"
+              required>
+        <template is="dom-repeat" items="[[metrics]]" as="item">
+          <paper-item name="[[item.id]]">[[item.name]]</paper-item>
+        </template>
+      </mostly-select>
     </div>
 
     <mostly-collapse-button role="widget">
@@ -38,25 +56,6 @@ Example:
         <playing-tag-suggestion path="leaderboards" target="[[leaderboard]]" allow-new-tags
                 placeholder="[[i18n('playing.tags.placeholder')]]">
         </playing-tag-suggestion>
-
-        <label>[[i18n('play.leaderboard.field.constraints')]]</label>
-        <div class="form-row">
-          <div class="flex">
-            <paper-input name="minimum" label="[[i18n('play.leaderboard.leaderboard.constraints.minimum')]]"
-                  type="number" value="{{leaderboard.constraints.minimum}}" always-float-label></paper-input>
-          </div>
-          <div class="flex">
-            <paper-input name="maximum" label="[[i18n('play.leaderboard.leaderboard.constraints.maximum')]]"
-                  type="number" value="{{leaderboard.constraints.maximum}}" always-float-label></paper-input>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="flex">
-            <paper-input name="default" label="[[i18n('play.leaderboard.leaderboard.constraints.default')]]"
-                  type="number" value="{{leaderboard.constraints.default}}" always-float-label></paper-input>
-          </div>
-          <div class="flex">&nbsp;</div>
-        </div>
       </div>
     </mostly-collapse-button>
 
@@ -84,6 +83,13 @@ Example:
           new: {
             type: Boolean,
             value: false
+          },
+
+          metricParams: {
+            type: Object,
+            value: {
+              "type[$in]": [ "point", "compound" ]
+            }
           }
         }
       }
