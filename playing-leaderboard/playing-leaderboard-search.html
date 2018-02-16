@@ -11,6 +11,8 @@
 <link rel="import" href="../../mostly-elements/mostly-common/mostly-resource.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-pagination-controls.html">
 
+<link rel="import" href="../behaviors/playing-leaderboard-behavior.html">
+
 <!--
 `playing-leaderboard-search`
 @group Playing Elements
@@ -85,7 +87,8 @@
   </template>
 
   <script>
-    class PlayingLeaderboardSearch extends Polymer.mixinBehaviors([Mostly.I18nBehavior], Polymer.Element) {
+    class PlayingLeaderboardSearch extends Polymer.mixinBehaviors(
+        [Mostly.I18nBehavior, Playing.LeaderboardBehavior], Polymer.Element) {
 
       static get is() { return 'playing-leaderboard-search' };
 

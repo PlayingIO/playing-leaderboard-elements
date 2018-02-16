@@ -14,6 +14,7 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-dialog.html">
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 
+<link rel="import" href="../behaviors/playing-leaderboard-behavior.html">
 <link rel="import" href="playing-edit-leaderboard.html">
 <link rel="import" href="playing-view-leaderboard.html">
 
@@ -184,7 +185,7 @@ Example:
 
   <script>
     class PlayingManageLeaderboard extends Polymer.mixinBehaviors(
-        [Mostly.I18nBehavior, Mostly.FiltersBehavior, Mostly.FuncBehavior], Polymer.Element) {
+        [Mostly.I18nBehavior, Mostly.FiltersBehavior, , Playing.LeaderboardBehavior], Polymer.Element) {
 
       static get is() { return 'playing-manage-leaderboard' };
 

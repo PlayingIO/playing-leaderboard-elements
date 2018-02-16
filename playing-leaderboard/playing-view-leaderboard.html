@@ -1,3 +1,5 @@
+<link rel="import" href="../behaviors/playing-leaderboard-behavior.html">
+
 <!--
 An element for displaying leaderboard data.
 
@@ -55,7 +57,8 @@ Example:
   </template>
 
   <script>
-    class PlayingViewLeaderboard extends Polymer.mixinBehaviors([Mostly.I18nBehavior], Polymer.Element) {
+    class PlayingViewLeaderboard extends Polymer.mixinBehaviors(
+          [Mostly.I18nBehavior, Playing.LeaderboardBehavior], Polymer.Element) {
 
       static get is() { return 'playing-view-leaderboard' };
 

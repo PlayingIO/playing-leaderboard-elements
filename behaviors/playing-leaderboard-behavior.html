@@ -1,0 +1,21 @@
+<link rel="import" href="../../mostly-elements/behaviors/mostly-func-behavior.html">
+
+<script>
+  var Playing = Playing || {};
+
+  /**
+   * @polymerBehavior Playing.LeaderboardBehavior
+   */
+  Playing.LeaderboardBehavior = [Mostly.FuncBehavior, {
+
+    properties: {
+      /**
+       * ranking type
+       */
+      rankingType: {
+        type: Array,
+        value: ['regular']
+      }
+    }
+  }];
+</script>
