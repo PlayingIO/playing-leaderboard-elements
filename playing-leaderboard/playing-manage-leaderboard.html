@@ -15,8 +15,6 @@
 <link rel="import" href="../../mostly-elements/widgets/mostly-input.html">
 
 <link rel="import" href="../behaviors/playing-leaderboard-behavior.html">
-<link rel="import" href="playing-edit-leaderboard.html">
-<link rel="import" href="playing-view-leaderboard.html">
 
 <!--
 An element for managing a leaderboard.
@@ -116,8 +114,8 @@ Example:
       }
     </style>
 
-    <mostly-resource id="request" path="leaderboards" schemas='*'></mostly-resource>
-    <mostly-resource id="editRequest" path="leaderboards" schemas='*'></mostly-resource>
+    <mostly-resource id="request" path="[[path]]" schemas='*'></mostly-resource>
+    <mostly-resource id="editRequest" path="[[path]]" schemas='*'></mostly-resource>
 
     <paper-toast id="toast"></paper-toast>
 
@@ -149,15 +147,15 @@ Example:
 
       <iron-pages selected="[[page]]" attr-for-selected="id">
         <section id="viewer">
-          <mostly-layout id="viewerLayout" href="[[_layoutHref('view')]]"
-                  model="[[_layoutModel(leaderboard, new)]]"></mostly-layout>
+          <mostly-layout id="viewerLayout" href="[[layoutHref('view')]]"
+                  model="[[layoutModel(leaderboard, new)]]"></mostly-layout>
         </section>
         <section id="editor">
           <h3>[[i18n('play.leaderboard.editLeaderboard.heading')]]</h3>
           <iron-form id="editLeaderboardForm">
             <form class="vertical layout">
-              <mostly-layout id="viewerLayout" href="[[_layoutHref('edit')]]"
-                      model="[[_layoutModel(leaderboard, new)]]"></mostly-layout>
+              <mostly-layout id="viewerLayout" href="[[layoutHref('edit')]]"
+                      model="[[layoutModel(leaderboard, new)]]"></mostly-layout>
             </form>
           </iron-form>
           <div class="horizontal end-justified layout">
@@ -213,6 +211,11 @@ Example:
            */
           origLeaderboard: Object,
 
+          path: {
+            type: String,
+            computed: 'leaderboardPath(leaderboard)'
+          },
+
           empty: Boolean,
 
           readonly: {
@@ -243,17 +246,6 @@ Example:
             this.origLeaderboard = this.fp.clone(this.leaderboard);
           });
         }
-      }
-
-      _layoutHref(layout) {
-        return layout && this.resolveUrl(`playing-${layout}-leaderboard.html`);
-      }
-
-      _layoutModel() {
-        return {
-          leaderboard: this.leaderboard,
-          "new": true
-        };
       }
 
       _toggleDialog(e) {

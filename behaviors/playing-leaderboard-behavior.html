@@ -16,6 +16,25 @@
         type: Array,
         value: ['regular']
       }
+    },
+
+    leaderboardPath(leaderboard) {
+      if (leaderboard && leaderboard.id) {
+        return 'leaderboards/' + leaderboard.id;
+      } else {
+        return 'leaderboards/' + leaderboard;
+      }
+    },
+
+    layoutHref(layout) {
+      return layout && this.resolveUrl(`playing-${layout}-leaderboard.html`);
+    },
+
+    layoutModel() {
+      return {
+        leaderboard: this.leaderboard,
+        "new": true
+      };
     }
   }];
 </script>
