@@ -1,3 +1,4 @@
+<link rel="import" href="../../playing-rule-elements/playing-rule/playing-edit-conditions.html">
 <link rel="import" href="../behaviors/playing-leaderboard-behavior.html">
 
 <!--
@@ -72,6 +73,7 @@ Example:
         <mostly-select
                 placeholder="[[i18n('play.leaderboard.scope.type.placeholder')]]"
                 selected="{{leaderboard.scope.type}}"
+                on-selected-changed="_scopeTypeChanged"
                 attr-for-selected="name"
                 no-label-float required>
           <template is="dom-repeat" items="[[scopeTypes]]" as="item">
@@ -94,7 +96,7 @@ Example:
       </div>
     </div>
 
-    <!-- entity -->
+    <!-- cycles -->
     <label role="widget">[[i18n('play.leaderboard.cycles.placeholder')]]</label>
     <mostly-buttons-group role="widget" multi attr-for-selected="name" selected-values="{{leaderboard.cycles}}">
       <paper-button name="daily">[[i18n('play.leaderboard.cycles.daily')]]</paper-button>
@@ -153,9 +155,12 @@ Example:
         }
       }
 
-      hasScope(type) {
-        return type && ['team', 'group'].indexOf(type) >= 0;
+      _scopeTypeChanged(e) {
+        if (e.detail.value === 'every' || e.detail.value === 'custom') {
+          this.set('leaderboard.scope.id', null);
+        }
       }
+
     }
 
     customElements.define(PlayingEditLeaderboard.is, PlayingEditLeaderboard);

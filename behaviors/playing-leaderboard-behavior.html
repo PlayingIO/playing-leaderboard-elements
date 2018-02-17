@@ -66,6 +66,10 @@
 
     hasErrors() {
       return this.errors !== '';
+    },
+
+    hasScope(type) {
+      return type && ['team', 'group'].indexOf(type) >= 0;
     }
   }];
 </script>

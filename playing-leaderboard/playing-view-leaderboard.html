@@ -1,3 +1,4 @@
+<link rel="import" href="../../playing-rule-elements/playing-rule/playing-view-conditions.html">
 <link rel="import" href="../behaviors/playing-leaderboard-behavior.html">
 
 <!--
@@ -25,6 +26,16 @@ Example:
         @apply --mostly-label;
       }
     </style>
+
+    <mostly-resource id="metrics" path="metrics"
+            params="[[metricParams]]"
+            schemas="*"
+            response-data="{{metrics}}"
+            auto cached="60"></mostly-resource>
+    <mostly-resource id="teams" path="teams""
+            schemas="*"
+            response-data={{teams}}
+            auto cached="60"></mostly-resource>
     
     <div role="widget" hidden$="[[!leaderboard.description]]">
       <label>[[i18n('play.leaderboard.field.description')]]</label>
@@ -37,22 +48,43 @@ Example:
     </div>
 
     <div role="widget">
-      <label>[[i18n('play.leaderboard.field.constraints')]]</label>
-      <div class="table">
-        <div class="table-header">
-          <div class="flex">[[i18n('play.leaderboard.constraints.minimum')]]</div>
-          <div class="flex">[[i18n('play.leaderboard.constraints.maximum')]]</div>
-          <div class="flex">[[i18n('play.leaderboard.constraints.default')]]</div>
-        </div>
-        <div class="table-rows">
-          <div class="table-row">
-            <div class="flex">[[leaderboard.constraints.minimum]]</div>
-            <div class="flex">[[leaderboard.constraints.maximum]]</div>
-            <div class="flex">[[leaderboard.constraints.default]]</div>
-          </div>
-        </div>
+      <label>[[i18n('play.leaderboard.metric')]]</label>
+      <span class="rule-object rule-metric">
+        <i class$="icon-[[findById(metrics, leaderboard.metric, 'type')]]"></i>
+        [[findById(metrics, leaderboard.metric, 'name')]]
+      </span>
+    </div>
+
+    <!-- entity -->
+    <div role="widget">
+      <label>[[i18n('play.leaderboard.entity')]]</label>
+      <mostly-tag>[[p18n('play.leaderboard.entity', leaderboard.entity)]]</mostly-tag>
+    </div>
+
+    <!-- scope -->
+    <div role="widget">
+      <label>[[i18n('play.leaderboard.scope')]]</label>
+      <b>[[p18n('play.leaderboard.scope', leaderboard.scope.type)]]</b>
+      <template is="dom-if" if="[[hasScope(leaderboard.scope.type)]]" restamp>
+        <span class="rule-object rule-team">[[findById(teams, leaderboard.scope.id, 'name')]]</span>
+      </template>
+    </div>
+
+    <!-- cycles -->
+    <div role="widget">
+      <label>[[i18n('play.leaderboard.cycles')]]</label>
+      <div class="layout horizontal">
+        <template is="dom-repeat" items="[[leaderboard.cycles]]" as="item">
+          <mostly-tag>[[p18n('play.leaderboard.cycles', item)]]</mostly-tag>
+        </template>
       </div>
     </div>
+
+    <!-- requirements -->
+    <template is="dom-if" if="[[leaderboard.requires.length]]" restamp>
+      <label>[[i18n('play.leaderboard.requires.placeholder')]]</label>
+      <playing-view-conditions data="[[leaderboard.requires]]"></playing-view-conditions>
+    </template>
 
   </template>
 
@@ -70,6 +102,13 @@ Example:
           leaderboard: {
             type: Object,
             value: {}
+          },
+
+          metricParams: {
+            type: Object,
+            value: {
+              "type[$in]": [ "point", "compound" ]
+            }
           }
         }
       }
