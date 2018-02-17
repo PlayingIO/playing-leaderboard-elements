@@ -12,6 +12,24 @@
       /**
        * ranking type
        */
+      entityTypes: {
+        type: Array,
+        value: ['players', 'teams']
+      },
+
+      scopeTypes: {
+        type: Array,
+        value: ['every', 'team', 'group', 'custom']
+      },
+
+      calculatedCycles: {
+        type: Array,
+        value: ['daily', 'weekly', 'monthly', 'yearly', 'alltime']
+      },
+
+      /**
+       * ranking type
+       */
       rankingType: {
         type: Array,
         value: ['regular']
@@ -38,7 +56,7 @@
     },
 
     emptyLeaderboard() {
-      return { constraints: {} };
+      return { cycles: [], scope: {}, requires: [] };
     },
 
     resetFields() {

@@ -26,9 +26,13 @@ Example:
             params="[[metricParams]]"
             schemas="*"
             response-data="{{metrics}}"
-            auto cached="10"></mostly-resource>
+            auto cached="60"></mostly-resource>
+    <mostly-resource id="teams" path="teams""
+            schemas="*"
+            response-data={{teams}}
+            auto cached="60"></mostly-resource>
 
-    <div class="layout vertical" role="widget">
+    <div class="layout vertical">
       <mostly-input name="description" label="[[i18n('play.leaderboard.field.description')]]"
             value="{{leaderboard.description}}" maxlength="300"
             char-counter always-float-label></mostly-input>
@@ -48,6 +52,61 @@ Example:
         </template>
       </mostly-select>
     </div>
+
+    <!-- entity -->
+    <mostly-select
+            label="[[i18n('play.leaderboard.entity')]]"
+            placeholder="[[i18n('play.leaderboard.entity.placeholder')]]"
+            selected="{{leaderboard.entity}}"
+            attr-for-selected="name"
+            no-label-float required>
+      <template is="dom-repeat" items="[[entityTypes]]" as="item">
+        <paper-item name="[[item]]">[[p18n('play.leaderboard.entity', item)]]</paper-item>
+      </template>
+    </mostly-select>
+
+    <!-- scope -->
+    <label>[[i18n('play.leaderboard.scope')]]</label>
+    <div class="form-row">
+      <div class="flex">
+        <mostly-select
+                placeholder="[[i18n('play.leaderboard.scope.type.placeholder')]]"
+                selected="{{leaderboard.scope.type}}"
+                attr-for-selected="name"
+                no-label-float required>
+          <template is="dom-repeat" items="[[scopeTypes]]" as="item">
+            <paper-item name="[[item]]">[[p18n('play.leaderboard.scope', item)]]</paper-item>
+          </template>
+        </mostly-select>
+      </div>
+      <div class="flex">
+        <template is="dom-if" if="[[hasScope(leaderboard.scope.type)]]" restamp>
+          <mostly-select
+                  placeholder="[[i18n('play.leaderboard.scope.placeholder')]]"
+                  selected="{{leaderboard.scope.id}}"
+                  attr-for-selected="name"
+                  no-label-float>
+            <template is="dom-repeat" items="[[teams]]" as="item">
+              <paper-item name="[[item.id]]">[[item.name]]</paper-item>
+            </template>
+          </mostly-select>
+        </template>
+      </div>
+    </div>
+
+    <!-- entity -->
+    <label role="widget">[[i18n('play.leaderboard.cycles.placeholder')]]</label>
+    <mostly-buttons-group role="widget" multi attr-for-selected="name" selected-values="{{leaderboard.cycles}}">
+      <paper-button name="daily">[[i18n('play.leaderboard.cycles.daily')]]</paper-button>
+      <paper-button name="weekly">[[i18n('play.leaderboard.cycles.weekly')]]</paper-button>
+      <paper-button name="monthly">[[i18n('play.leaderboard.cycles.monthly')]]</paper-button>
+      <paper-button name="yearly">[[i18n('play.leaderboard.cycles.yearly')]]</paper-button>
+      <paper-button name="alltime">[[i18n('play.leaderboard.cycles.alltime')]]</paper-button>
+    </mostly-buttons-group>
+
+    <!-- requirements -->
+    <label role="widget">[[i18n('play.leaderboard.requires.placeholder')]]</label>
+    <playing-edit-conditions data="{{leaderboard.requires}}"></playing-edit-conditions>
 
     <mostly-collapse-button role="widget">
       <div slot="collapse-trigger">[[i18n('play.leaderboard.advanced')]]</div>
@@ -92,6 +151,10 @@ Example:
             }
           }
         }
+      }
+
+      hasScope(type) {
+        return type && ['team', 'group'].indexOf(type) >= 0;
       }
     }
 
