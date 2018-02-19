@@ -42,9 +42,8 @@
       }
     </style>
 
-    <mostly-resource id="leaderboardSearch" auto
-            path="leaderboards"
-            response="{{leaderboards}}"></mostly-resource>
+    <mostly-resource id="searchRequest" path="leaderboards"
+            response-data="{{leaderboards}}" auto></mostly-resource>
 
     <mostly-card class="search">
       <mostly-input noink autofocus="true" value="{{searchTerm}}" type="search"
@@ -65,20 +64,20 @@
           <div class="flex-4">[[i18n('play.leaderboard.field.description')]]</div>
         </div>
         <div class="table-rows">
-          <template is="dom-repeat" items="[[leaderboards.data]]" as="item">
+          <template is="dom-repeat" items="[[leaderboards]]" as="item">
             <div class="table-row" on-tap="_manageLeaderboard">
               <div class="flex-2">[[item.name]]</div>
               <div class="flex-4">[[item.description]]</div>
             </div>
           </template>
-          <template is="dom-if" if=[[!leaderboards.data.length]]>
+          <template is="dom-if" if=[[!leaderboards.length]]>
             <div class="table-row">
               <div class="empty-result">[[i18n('play.leaderboard.search.empty')]]</div>
             </div>
           </template>
         </div>
       </div>
-      <mostly-pagination-controls page="{{leaderboardsCurrentPage}}" number-of-pages="[[leaderboards.numberOfPages]]"></mostly-pagination-controls>
+      <mostly-pagination-controls page="{{currentPage}}" number-of-pages="[[leaderboards.numberOfPages]]"></mostly-pagination-controls>
     </mostly-card>
 
   </template>
@@ -100,7 +99,7 @@
 
           leaderboards: Object,
 
-          leaderboardsCurrentPage: {
+          currentPage: {
             type: Number,
             value: 1
           },
@@ -114,24 +113,24 @@
 
       static get observers() {
         return [
-          '_searchLeaderboards(leaderboardsCurrentPage)'
+          '_searchLeaderboards(currentPage)'
         ];
       }
 
       _searchTermChanged() {
-        this.leaderboardsCurrentPage = 1;
+        this.currentPage = 1;
         this.currentPageSize = 10;
         this._searchLeaderboards();
       }
 
       _searchLeaderboards() {
         var params = {
-          '$skip': (this.leaderboardsCurrentPage - 1) * this.currentPageSize
+          '$skip': (this.currentPage - 1) * this.currentPageSize
         };
         if (this.searchTerm) {
           params['name[$like]'] = this.searchTerm;
         }
-        this.$.leaderboardSearch.params = params;
+        this.$.searchRequest.params = params;
       }
 
       _manageLeaderboard(e) {
