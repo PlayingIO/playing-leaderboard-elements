@@ -75,7 +75,7 @@ An element for managing leaderboards in Playing game services.
 
           <section name="manage-leaderboard">
             <playing-manage-leaderboard id="leaderboardManager"
-                    leaderboard="[[selectedLeaderboard.id]]"
+                    leaderboard="[[selectedLeaderboard]]"
                     readonly$="[[readonly]]"></playing-manage-leaderboard>
           </section>
         </iron-pages>
@@ -91,6 +91,11 @@ An element for managing leaderboards in Playing game services.
 
       static get properties() {
         return {
+          visible: {
+            type: Boolean,
+            observer: '_visibleChanged'
+          },
+
           /**
            * The leaderboard manage page to be displayed.
            */
@@ -98,6 +103,19 @@ An element for managing leaderboards in Playing game services.
             type: String,
             value: 'search',
             notify: true
+          },
+
+          entity: {
+            type: Object,
+            value: {},
+            observer: '_entityChanged'
+          },
+
+          /**
+           * Selected leaderboard id.
+           */
+          selectedLeaderboard: {
+            type: String
           },
 
           /**
@@ -122,6 +140,27 @@ An element for managing leaderboards in Playing game services.
         this.addEventListener('manageLeaderboard', this._manageLeaderboard);
       }
 
+      _entityChanged() {
+        if (!this.visible) return;
+        if (this.entity && this.entity.id && this.entity.type) {
+          if (this.entity.type === 'leaderboard') {
+            this.selectedLeaderboard = null;
+            this.selectedLeaderboard = this.entity.id;
+            this.page = 'manage-leaderboard';
+          }
+        } else {
+          this.$$('playing-leaderboard-search')._searchTermChanged();
+        }
+      }
+
+      _visibleChanged() {
+        if (this.visible) {
+          this.async(() => {
+            this._entityChanged();
+          });
+        }
+      }
+
       /**
        * Go to the 'search' page.
        */
@@ -141,9 +180,8 @@ An element for managing leaderboards in Playing game services.
       }
 
       _manageLeaderboard(e) {
-        this.selectedLeaderboard = null;
-        this.selectedLeaderboard = e.detail.leaderboard;
-        this.page = 'manage-leaderboard';
+        var url = 'leaderboard-management/leaderboard/' + e.detail.leaderboard;
+        this.navigateTo('play', url);
       }
 
       _hasAdministrationPermissions(user) {
