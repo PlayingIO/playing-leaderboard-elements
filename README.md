@@ -1,7 +1,7 @@
 Playing Leaderboard Web Components
 ==================================
 
-Leaderboard management web components for playful applications.
+Leaderboard management web components for building playful applications.
 
 # Usage
 
