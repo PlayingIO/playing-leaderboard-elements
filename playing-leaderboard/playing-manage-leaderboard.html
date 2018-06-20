@@ -164,7 +164,7 @@ Example:
 
       ready() {
         super.ready();
-        this.$.editLeaderboardForm.addEventListener('iron-form-presubmit', (event) => {
+        this.$.editLeaderboardForm.addEventListener('iron-form-presubmit', event => {
           event.preventDefault();
           this._saveLeaderboard();
         });
@@ -172,7 +172,7 @@ Example:
 
       _fetch() {
         if (typeof this.leaderboard === 'string') {
-          this.$.request.get().then((response) => {
+          this.$.request.get().then(response => {
             this.leaderboard = response.data;
             this.origLeaderboard = this.fp.clone(this.leaderboard);
           });
@@ -204,7 +204,7 @@ Example:
         this.page = 'viewer';
         var editedLeaderboard = JSON.parse(JSON.stringify(this.leaderboard));
         this.$.editRequest.data = editedLeaderboard;
-        this.$.editRequest.patch().then((response) => {
+        this.$.editRequest.patch().then(response => {
           this.leaderboard = response.data;
           this.origLeaderboard = this.fp.clone(this.leaderboard);
           this._toast(this.i18n('play.leaderboard.updated'));
@@ -217,7 +217,7 @@ Example:
 
       _deleteLeaderboard() {
         this.$.deleteLeaderboardDialog.toggle();
-        this.$.editRequest.remove().then((response) => {
+        this.$.editRequest.remove().then(response => {
           this.fire('playing-leaderboard-deleted', this.leaderboard);
           this._goHome();
         });
